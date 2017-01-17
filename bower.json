@@ -1,0 +1,8 @@
+{
+  "name": "at-carbon-resolver",
+  "version": "0.0.1.14",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#master"
+  }
+}

@@ -1,0 +1,106 @@
+<link rel="import" href="../tangere/tangere.html">
+<link rel="import" href="../at-theme/at-theme.html">
+<link rel="import" href="../at-form-lookup/at-form-lookup.html">
+<dom-module id="at-carbon-resolver">
+  <template>
+    <style include="at-form-common"></style>
+    <style>
+      .at-container, pre {
+        @apply(--paper-font-code1);
+      }
+    </style>
+    <div class="container">
+      <at-form-lookup id="lookup" hidden on-selected-items-changed="_selected"></at-form-lookup>
+    </div>
+  </template>
+  <script>
+    'use strict';
+    Polymer({
+      is: 'at-carbon-resolver',
+
+      properties: {
+
+        modelRoot: {
+          type: String,
+          value: ""
+        },
+        value: {
+          type: Object
+        }
+      },
+
+      $meta: [{
+        title: "Entity Resolver",
+        type: "element",
+        xtype: "at-carbon-resolver"
+      }],
+
+      ready: function () {
+
+      },
+
+      _updateValue: function(v) {
+        this.value = v;
+
+        this.fire('value-changed', {
+          value: this.value
+        });
+      },
+
+      _getObjPath: function (obj, path) {
+
+        if (!path) return obj;
+        var paths = path.split('.'), current = obj;
+
+        for (var i = 0; i < paths.length; ++i) {
+          if (current[paths[i]] == undefined) {
+            return undefined;
+          } else {
+            current = current[paths[i]];
+          }
+        }
+        return current;
+      },
+
+      actionListener: function (event) {
+
+        function isArray(obj) {
+          return Object.prototype.toString.call(obj) === "[object Array]";
+        }
+        function isEmptyString(obj) {
+          return Object.prototype.toString.call(obj) === "[object String]" && obj === "";
+        }
+
+        var model = event.detail.model.state.model;
+
+        if (!model || !model.items || model.items.length == 0) {
+          this._updateValue(null);
+          exit;
+        }
+        
+        // one item returned copy directly
+        if (model.items.length == 1) {
+          this._updateValue(model.items[0]);
+          return;
+        }
+
+        this.$.lookup.url = "/api/adenin.GateKeeper.Service/Proxy/" + model._card.Name;
+        this.$.lookup.hidden = false;
+        this.$.lookup.initialSearchTerm = model._card.Query;
+
+        
+      },
+
+      _selected: function (e) {
+        debugger;
+        if(e.detail.value.length==0) {
+          this._updateValue(null);
+          return;
+        }
+        if (e.detail.value.length != 1) console.log("unexpected number of items: " + e.detail.value.length);
+
+        this._updateValue(e.detail.value[0]);
+      }
+    });
+  </script>
+</dom-module>
