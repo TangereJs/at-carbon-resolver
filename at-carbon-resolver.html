@@ -5,8 +5,8 @@
   <template>
     <style include="at-form-common"></style>
     <style>
-      .at-container, pre {
-        @apply(--paper-font-code1);
+      #lookup {
+       height: 200px;
       }
     </style>
     <div class="container">
@@ -32,7 +32,9 @@
       $meta: [{
         title: "Entity Resolver",
         type: "element",
-        xtype: "at-carbon-resolver"
+        xtype: "at-carbon-resolver",
+        events: ["value-changed"],
+        invisible: true
       }],
 
       ready: function () {
@@ -74,16 +76,19 @@
         var model = event.detail.model.state.model;
 
         if (!model || !model.items || model.items.length == 0) {
-          this._updateValue(null);
+          this._updateValue({ _none: true, _query: model._card.Query });
           exit;
         }
         
         // one item returned copy directly
         if (model.items.length == 1) {
-          this._updateValue(model.items[0]);
+          var item = model.items[0];
+          item._one = true;
+          this._updateValue(item);
           return;
         }
 
+        this._updateValue({ _prompt: true, _query: model._card.Query });
         this.$.lookup.url = "/api/adenin.GateKeeper.Service/Proxy/" + model._card.Name;
         this.$.lookup.hidden = false;
         this.$.lookup.initialSearchTerm = model._card.Query;
@@ -92,14 +97,18 @@
       },
 
       _selected: function (e) {
-        debugger;
+
+        this.$.lookup.hidden = true;
         if(e.detail.value.length==0) {
-          this._updateValue(null);
+          this._updateValue({ _none: true });
           return;
         }
         if (e.detail.value.length != 1) console.log("unexpected number of items: " + e.detail.value.length);
 
-        this._updateValue(e.detail.value[0]);
+        var item = e.detail.value[0];
+        item._one = true;
+
+        this._updateValue(item);
       }
     });
   </script>
