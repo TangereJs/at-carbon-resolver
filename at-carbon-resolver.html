@@ -26,6 +26,10 @@
         },
         value: {
           type: Object
+        },
+        itemRoot: {
+          type: String,
+          value: ""
         }
       },
 
@@ -83,6 +87,11 @@
         // one item returned copy directly
         if (model.items.length == 1) {
           var item = model.items[0];
+          if (this.itemRoot) {
+            var _item = item;
+            item = _getObjPath(item, this.itemRoot);
+            item._item = _item; // add full parent _item
+          }
           item._one = true;
           this._updateValue(item);
           return;
