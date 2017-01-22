@@ -89,7 +89,7 @@
           var item = model.items[0];
           if (this.itemRoot) {
             var _item = item;
-            item = _getObjPath(item, this.itemRoot);
+            item = this._getObjPath(item, this.itemRoot);
             item._item = _item; // add full parent _item
           }
           item._one = true;
