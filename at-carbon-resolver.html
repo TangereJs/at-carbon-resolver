@@ -89,8 +89,8 @@
           var item = model.items[0];
           if (this.itemRoot) {
             var _item = item;
-            item = this._getObjPath(item, this.itemRoot);
-            item._item = _item; // add full parent _item
+            item = this._getObjPath(item, this.itemRoot);           
+            item._item = _item; // copy full parent _item
           }
           item._one = true;
           this._updateValue(item);
@@ -115,6 +115,12 @@
         if (e.detail.value.length != 1) console.log("unexpected number of items: " + e.detail.value.length);
 
         var item = e.detail.value[0];
+        if (this.itemRoot) {
+          var _item = item;
+          item = this._getObjPath(item, this.itemRoot);
+          item._item = _item; // add full parent _item
+        }
+
         item._one = true;
 
         this._updateValue(item);
